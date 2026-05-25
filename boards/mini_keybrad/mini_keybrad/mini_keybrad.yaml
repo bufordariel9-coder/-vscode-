@@ -1,0 +1,10 @@
+identifier: mini_keybrad/nrf52840
+name: mini_keybrad
+vendor: mini_keybrad
+type: mcu
+arch: arm
+ram: 256
+flash: 1024
+toolchain:
+  - zephyr
+supported: []

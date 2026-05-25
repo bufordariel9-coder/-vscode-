@@ -1,0 +1,79 @@
+/dts-v1/;
+#include <nordic/nrf52840_qiaa.dtsi>
+#include "mini_keybrad-pinctrl.dtsi"
+
+/ {
+	model = "mini_keybrad";
+	compatible = "mini_keybrad,mini-keybrad";
+
+	chosen {
+		zephyr,sram = &sram0;
+		zephyr,flash = &flash0;
+		zephyr,code-partition = &app_partition;
+	};
+
+	kbd_matrix: kbd-matrix {
+		compatible = "gpio-kbd-matrix";
+		status = "disabled";
+
+		/*
+		 * Temporary pin mapping from the schematic:
+		 * ROW0..ROW5: U36.28, U36.22, U36.20, U36.18, U36.17, U36.16
+		 * COL0..COL3: U36.15, U36.14, U36.12, U36.10
+		 *
+		 * Adjust only these row-gpios/col-gpios entries if board bring-up
+		 * shows a row or column mismatch.
+		 */
+		row-gpios = <&gpio0 15 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>,
+			    <&gpio0 7  (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>,
+			    <&gpio0 12 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>,
+			    <&gpio0 4  (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>,
+			    <&gpio1 9  (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>,
+			    <&gpio0 8  (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+
+		col-gpios = <&gpio0 5  GPIO_ACTIVE_LOW>,
+			    <&gpio0 6  GPIO_ACTIVE_LOW>,
+			    <&gpio0 26 GPIO_ACTIVE_LOW>,
+			    <&gpio0 30 GPIO_ACTIVE_LOW>;
+
+		actual-key-mask = <0x3e 0x3e 0x1e 0x2b>;
+		no-ghostkey-check;
+		col-drive-inactive;
+		idle-mode = "scan";
+		poll-timeout-ms = <0>;
+		poll-period-ms = <5>;
+		debounce-down-ms = <10>;
+		debounce-up-ms = <20>;
+		settle-time-us = <50>;
+	};
+};
+
+&flash0 {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		app_partition: partition@0 {
+			label = "image-0";
+			reg = <0x00000000 DT_SIZE_K(992)>;
+		};
+
+		storage_partition: partition@f8000 {
+			label = "storage";
+			reg = <0x000f8000 DT_SIZE_K(32)>;
+		};
+	};
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+&gpiote {
+	status = "okay";
+};

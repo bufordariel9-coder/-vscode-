@@ -1,0 +1,5 @@
+board:
+  name: mini_keybrad
+  vendor: mini_keybrad
+  socs:
+    - name: nrf52840
